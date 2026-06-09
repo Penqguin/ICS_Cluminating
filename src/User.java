@@ -12,8 +12,8 @@ public class User {
     private boolean twoFactorEnabled;
     private String contactDestination;
     private String verificationCode;
-    private List<String> costStreams;
-    private List<String> revenueStreams;
+    private ArrayList<String> costStreams;
+    private ArrayList<String> revenueStreams;
     // Predefined advice messages for users!
     private final List<String> advice = List.of(
             "Use a strong password and change it regularly.",
@@ -35,13 +35,13 @@ public class User {
         this.revenueStreams = new ArrayList<>();
     }
     
-    public User(String username, String password, double balance, boolean twoFactorEnabled, ArrayList<> costStreams, ArrayList<> revenueStreams) {
+    public User(String username, String password, double balance, boolean twoFactorEnabled, ArrayList<String> costStreams, ArrayList<String> revenueStreams) {
         this.username = username;
         this.password = password;
         this.balance = balance;
-        this.twoFactorEnabled = false;
-        this.costStreams = new ArrayList<>();
-        this.revenueStreams = new ArrayList<>();
+        this.twoFactorEnabled = twoFactorEnabled;
+        this.costStreams = costStreams;
+        this.revenueStreams = revenueStreams;
     }
 
     public String getUsername() {
