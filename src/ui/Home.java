@@ -42,9 +42,9 @@ public class Home {
       System.out.println("=========================================================");
 
       // 2. Financial Summary Block (Formatted Outputs)
-      System.out.printf("  Net Balance:  $%,12.2f\n", totalBalance);
-      System.out.printf("  Total Income: $%,12.2f\n", totalIncome);
-      System.out.printf("Total Expenses: $%,12.2f\n", totalExpenses);
+      System.out.printf("    Net Balance: $%,12.2f\n", totalBalance);
+      System.out.printf("   Total Income: $%,12.2f\n", totalIncome);
+      System.out.printf(" Total Expenses: $%,12.2f\n", totalExpenses);
       System.out.println("=========================================================");
 
       // 3. Mini 2D Array Quick-View (Recent Activities)
