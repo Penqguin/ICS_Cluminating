@@ -2,20 +2,20 @@ package src.ui;
 
 import java.util.Scanner;
 
-class Home {
+public class Home {
   private static final Scanner sc = new Scanner(System.in);
 
-  // Mock data structures representing application state 
+  // Mock data structures representing application state
   // TODO: replace with fetched account info
   private static double totalBalance = 2450.75;
   private static double totalIncome = 3200.00;
   private static double totalExpenses = 749.25;
 
   private static String[][] recentTransactions = {
-    {"06/05", "Part-time Job ", "1200.00", "Income "},
-    {"06/06", "Grocery Store ", " 124.50", "Expense"},
-    {"06/07", "Transit Pass  ", "  55.00", "Expense"},
-    {"06/08", "Freelance Gig ", " 350.00", "Income "}
+      { "06/05", "Part-time Job", "1200.00", "Income" },
+      { "06/06", "Grocery Store", "124.50", "Expense" },
+      { "06/07", "Transit Pass", "55.00", "Expense" },
+      { "06/08", "Freelance Gig", "350.00", "Income" }
   };
 
   public static void displayHomepage() {
@@ -26,19 +26,25 @@ class Home {
 
       // 1. Header Banner
       System.out.println("=========================================================");
-      System.out.println("      __  ___                             _  __ ");
-      System.out.println("     /  |/  /___  ____  ___  __  __      | |/ / ");
-      System.out.println("    / /|_/ / __ \\/ __ \\/ _ \\/ / / /______| ' /  ");
-      System.out.println("   / /  / / /_/ / / / /  __/ /_/ /______/ . \\   ");
-      System.out.println("  /_/  /_/\\____/_/ /_/\\___/\\__, /      /_/|\\_\\  ");
-      System.out.println("                          /____/                ");
+      System.out.println(" /$$$$$$$                  /$$           /$$          ");
+      System.out.println("| $$__  $$                | $$          |__/          ");
+      System.out.println("| $$  \\ $$ /$$   /$$  /$$$$$$$  /$$$$$$  /$$  /$$$$$$ ");
+      System.out.println("| $$$$$$$ | $$  | $$ /$$__  $$ /$$__  $$| $$ /$$__  $$");
+      System.out.println("| $$__  $$| $$  | $$| $$  | $$| $$  \\ $$| $$| $$$$$$$$");
+      System.out.println("| $$  \\ $$| $$  | $$| $$  | $$| $$  | $$| $$| $$_____/");
+      System.out.println("| $$$$$$$/|  $$$$$$/|  $$$$$$$|  $$$$$$$| $$|  $$$$$$$");
+      System.out.println("|_______/  \\______/  \\_______/ \\____  $$|__/ \\_______/");
+      System.out.println("                               /$$  \\ $$              ");
+      System.out.println("                              |  $$$$$$/              ");
+      System.out.println("                               \\______/               ");
       System.out.println("=========================================================");
       System.out.println("                FINANCIAL DASHBOARD                      ");
       System.out.println("=========================================================");
 
       // 2. Financial Summary Block (Formatted Outputs)
       System.out.printf("  Net Balance:  $%,12.2f\n", totalBalance);
-      System.out.printf("  Total Income: $%,12.2f   |  Total Expenses: $%,12.2f\n", totalIncome, totalExpenses);
+      System.out.printf("  Total Income: $%,12.2f\n", totalIncome);
+      System.out.printf("Total Expenses: $%,12.2f\n", totalExpenses);
       System.out.println("=========================================================");
 
       // 3. Mini 2D Array Quick-View (Recent Activities)
@@ -46,14 +52,14 @@ class Home {
       System.out.println("  -----------------------------------------------------");
       System.out.printf("  | %-5s | %-15s | %-10s | %-7s |\n", "Date", "Description", "Amount", "Type");
       System.out.println("  -----------------------------------------------------");
-      
+
       // Loop through the 2D array matrix to print rows
       for (int i = 0; i < recentTransactions.length; i++) {
-          System.out.printf("  | %-5s | %-15s | $%9s | %-7s |\n", 
-                            recentTransactions[i][0], 
-                            recentTransactions[i][1], 
-                            recentTransactions[i][2], 
-                            recentTransactions[i][3]);
+        System.out.printf("  | %-5s | %-15s | $%9s | %-7s |\n",
+            recentTransactions[i][0],
+            recentTransactions[i][1],
+            recentTransactions[i][2],
+            recentTransactions[i][3]);
       }
       System.out.println("  -----------------------------------------------------");
       System.out.println("=========================================================");
@@ -69,7 +75,7 @@ class Home {
 
       switch (choice) {
         case "1":
-          // viewFullLedger(); 
+          // viewFullLedger();
           System.out.println("\n  Opening full budget sheet...");
           pauseScreen();
           break;
@@ -100,13 +106,8 @@ class Home {
     }
   }
 
-
   private static void pauseScreen() {
     System.out.print("  Press [Enter] to continue...");
     sc.nextLine();
-  }
-
-  public static void main(String[] args) {
-    displayHomepage();
   }
 }
