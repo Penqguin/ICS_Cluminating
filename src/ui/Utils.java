@@ -3,7 +3,7 @@ package src.ui;
 import java.util.Scanner;
 
 public class Utils {
-  private static final Scanner sc = new Scanner(System.in);
+  public static final Scanner sc = new Scanner(System.in);
 
   public static void clearScreen() {
     System.out.print("\033[H\033[2J");

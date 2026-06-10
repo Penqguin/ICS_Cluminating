@@ -6,19 +6,18 @@ import java.util.List;
 
 public class Home {
   private static final Scanner sc = new Scanner(System.in);
-  private static final int CURRENT_USER_ID = 1; // Default user for now
 
-  public static void displayHomepage() {
+  public static void displayHomepage(int userId) {
     boolean inHomepage = true;
 
     while (inHomepage) {
       Utils.clearScreen();
 
       // Fetch dynamic data from database
-      double totalIncome = DatabaseManager.getTotalIncome(CURRENT_USER_ID);
-      double totalExpenses = DatabaseManager.getTotalExpenses(CURRENT_USER_ID);
+      double totalIncome = DatabaseManager.getTotalIncome(userId);
+      double totalExpenses = DatabaseManager.getTotalExpenses(userId);
       double totalBalance = totalIncome - totalExpenses;
-      List<String[]> recentTransactions = DatabaseManager.getRecentTransactions(CURRENT_USER_ID);
+      List<String[]> recentTransactions = DatabaseManager.getRecentTransactions(userId);
 
       // 1. Header Banner
       System.out.println("=========================================================");

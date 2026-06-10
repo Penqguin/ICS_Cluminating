@@ -4,6 +4,9 @@ import src.DatabaseManager;
 class Main {
   public static void main(String[] args) {
     DatabaseManager.initializeDatabase();
-    Home.displayHomepage();
+    int userId = Login.promptForUser();
+    if (userId != -1) {
+      Home.displayHomepage(userId);
+    }
   }
 }
