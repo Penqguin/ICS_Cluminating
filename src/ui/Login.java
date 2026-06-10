@@ -21,6 +21,7 @@ public class Login {
 
         if (DatabaseManager.usernameExists(username)) {
             // Existing user, ask for password
+            // TODO: hide password while typing
             System.out.print("Enter password: ");
             String password = Utils.sc.nextLine().trim();
 
