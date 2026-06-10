@@ -1,28 +1,24 @@
 package src.ui;
 
+import src.DatabaseManager;
 import java.util.Scanner;
+import java.util.List;
 
 public class Home {
   private static final Scanner sc = new Scanner(System.in);
-
-  // Mock data structures representing application state
-  // TODO: replace with fetched account info
-  private static double totalBalance = 2450.75;
-  private static double totalIncome = 3200.00;
-  private static double totalExpenses = 749.25;
-
-  private static String[][] recentTransactions = {
-      { "06/05", "Part-time Job", "1200.00", "Income" },
-      { "06/06", "Grocery Store", "124.50", "Expense" },
-      { "06/07", "Transit Pass", "55.00", "Expense" },
-      { "06/08", "Freelance Gig", "350.00", "Income" }
-  };
+  private static final int CURRENT_USER_ID = 1; // Default user for now
 
   public static void displayHomepage() {
     boolean inHomepage = true;
 
     while (inHomepage) {
       Utils.clearScreen();
+
+      // Fetch dynamic data from database
+      double totalIncome = DatabaseManager.getTotalIncome(CURRENT_USER_ID);
+      double totalExpenses = DatabaseManager.getTotalExpenses(CURRENT_USER_ID);
+      double totalBalance = totalIncome - totalExpenses;
+      List<String[]> recentTransactions = DatabaseManager.getRecentTransactions(CURRENT_USER_ID);
 
       // 1. Header Banner
       System.out.println("=========================================================");
@@ -53,13 +49,13 @@ public class Home {
       System.out.printf("  | %-5s | %-15s | %-10s | %-7s |\n", "Date", "Description", "Amount", "Type");
       System.out.println("  -----------------------------------------------------");
 
-      // Loop through the 2D array matrix to print rows
-      for (int i = 0; i < recentTransactions.length; i++) {
+      // Loop through the transactions to print rows
+      for (String[] transaction : recentTransactions) {
         System.out.printf("  | %-5s | %-15s | $%9s | %-7s |\n",
-            recentTransactions[i][0],
-            recentTransactions[i][1],
-            recentTransactions[i][2],
-            recentTransactions[i][3]);
+            transaction[0],
+            transaction[1],
+            transaction[2],
+            transaction[3]);
       }
       System.out.println("  -----------------------------------------------------");
       System.out.println("=========================================================");
@@ -75,24 +71,22 @@ public class Home {
 
       switch (choice) {
         case "1":
-          // viewFullLedger();
-          System.out.println("\n  Opening full budget sheet...");
-          pauseScreen();
+          Budget.displayFullLedger();
           break;
         case "2":
           // modifyTransactions();
           System.out.println("\n  Opening transaction manager...");
-          pauseScreen();
+          Utils.pauseScreen();
           break;
         case "3":
           // viewVisualizations();
           System.out.println("\n  Generating financial trends...");
-          pauseScreen();
+          Utils.pauseScreen();
           break;
         case "4":
           // runProblems();
           System.out.println("\n  Loading sample mathematical practice modules...");
-          pauseScreen();
+          Utils.pauseScreen();
           break;
         case "5":
           System.out.println("\n  Logging out secure session. Goodbye!");
@@ -100,14 +94,9 @@ public class Home {
           break;
         default:
           System.out.println("\n  [!] Invalid choice. Please select an option from 1 to 5.");
-          pauseScreen();
+          Utils.pauseScreen();
           break;
       }
     }
-  }
-
-  private static void pauseScreen() {
-    System.out.print("  Press [Enter] to continue...");
-    sc.nextLine();
   }
 }
