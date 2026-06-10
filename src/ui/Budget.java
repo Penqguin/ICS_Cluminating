@@ -25,7 +25,7 @@ public class Budget {
         System.out.println("=========================================================");
 
         // 2. Local Performance Metrics
-        System.out.printf("  [Total Records: %-3d]   [Incomes: $%,-10.2f]   [Expenses: $%,-10.2f]\n", 
+        System.out.printf("  [Total Records: %3d]   [Incomes: $%,10.2f]   [Expenses: $%,10.2f]\n", 
                           recentTransactions.size(), totalIncome, totalExpenses);
         System.out.println("=========================================================");
 
@@ -73,9 +73,15 @@ public class Budget {
                     Utils.pauseScreen();
                     break;
                 }
-                System.out.print("  Type (Income/Expense): ");
+                System.out.print("  Type ( (I)ncome / (E)xpense ): ");
                 String type = sc.nextLine();
-                if (!type.equalsIgnoreCase("Income") && !type.equalsIgnoreCase("Expense")) {
+                if (type.equalsIgnoreCase("Income") && 
+                    type.equalsIgnoreCase("I")) {
+                   type = "Income"; 
+                } else if (type.equalsIgnoreCase("Expense") && 
+                           type.equalsIgnoreCase("E")) {
+                    type = "Expense";
+                } else {
                     System.out.println("  [!] Type must be 'Income' or 'Expense'.");
                     Utils.pauseScreen();
                     break;

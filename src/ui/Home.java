@@ -61,7 +61,7 @@ public class Home {
       System.out.println("=========================================================");
 
       // 4. Navigation Menu
-      System.out.println("  1. [View Full Ledger]      2. [Add Income/Expense]");
+      System.out.println("  1. [View Full Ledger]       2. [Add Income/Expense]");
       System.out.println("  3. [Analyze Graphs/Trends]  4. [Practice Problems]");
       System.out.println("  5. [Logout and Exit]");
       System.out.println("=========================================================");
