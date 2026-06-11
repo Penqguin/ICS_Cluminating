@@ -1,6 +1,8 @@
 package src.ui;
 
 import src.DatabaseManager;
+import src.InflationFetcher;
+
 import java.util.Scanner;
 import java.util.List;
 

@@ -2,6 +2,8 @@ package src.ui;
 
 import java.util.Scanner;
 
+import src.InflationFetcher;
+
 public class Practice {
     private static final Scanner sc = Utils.sc;
 
