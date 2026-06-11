@@ -50,12 +50,12 @@ public class Home {
       // 3. Mini 2D Array Quick-View (Recent Activities)
       System.out.println("  RECENT TRANSACTIONS:");
       System.out.println("  -----------------------------------------------------");
-      System.out.printf("  | %-5s | %-15s | %-10s | %-7s |\n", "Date", "Description", "Amount", "Type");
+      System.out.printf("  | %-10s | %-12s | %-10s | %-7s |\n", "Date", "Description", "Amount", "Type");
       System.out.println("  -----------------------------------------------------");
 
       // Loop through the transactions to print rows
       for (String[] transaction : recentTransactions) {
-        System.out.printf("  | %-5s | %-15s | $%9s | %-7s |\n",
+        System.out.printf("  | %-10s | %-12s | $%9s | %-7s |\n",
             transaction[0],
             transaction[1],
             transaction[2],

@@ -111,7 +111,7 @@ public class DatabaseManager {
 
             // Core user creation
             userStmt.setInt(1, 1);
-            userStmt.setString(2, "michael");
+            userStmt.setString(2, "Example");
             userStmt.setString(3, hashPassword("password123")); // default password
             userStmt.setString(4, "user@domain.com");
             userStmt.executeUpdate();
