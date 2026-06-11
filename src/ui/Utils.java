@@ -13,4 +13,12 @@ public class Utils {
     System.out.print("  Press [Enter] to continue...");
     sc.nextLine();
   } 
+
+  public static void sleep(int ms) {
+    try {
+      Thread.sleep(ms);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
 }

@@ -59,6 +59,12 @@ public class DatabaseManager {
                     + ");";
             stmt.execute(createBudgetTable);
             
+            // Add new columns if they don't exist
+            addColumnIfNotExists(stmt, "users", "two_fa_enabled", "BOOLEAN DEFAULT 0");
+            addColumnIfNotExists(stmt, "users", "cost_streams", "TEXT");
+            addColumnIfNotExists(stmt, "users", "revenue_streams", "TEXT");
+            addColumnIfNotExists(stmt, "users", "savings_rate", "REAL DEFAULT 0.0");
+
             // Seed default program mock values if users table is empty
             if (isTableEmpty("users")) {
                 seedMockData(conn);
@@ -66,6 +72,18 @@ public class DatabaseManager {
 
         } catch (SQLException e) {
             System.err.println("[Database Error] Setup execution failed: " + e.getMessage());
+        }
+    }
+
+    private static void addColumnIfNotExists(Statement stmt, String tableName, String columnName, String columnType) {
+        try {
+            stmt.execute("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnType + ";");
+            // System.out.println("[Database] Column " + columnName + " added to " + tableName);
+        } catch (SQLException e) {
+            // Column likely already exists
+            if (!e.getMessage().contains("duplicate column name")) {
+                // Ignore if it's just that the column already exists
+            }
         }
     }
 
@@ -100,10 +118,10 @@ public class DatabaseManager {
 
             // Seed initial transactional entries targeting user_id = 1
             Object[][] data = {
-                {"06/05", "Part-time Job", 1200.00, "Income"},
-                {"06/06", "Grocery Store", 124.50, "Expense"},
-                {"06/07", "Transit Pass", 55.00, "Expense"},
-                {"06/08", "Freelance Gig", 350.00, "Income"}
+                {"05/06/2026", "Part-time Job", 1200.00, "Income"},
+                {"06/06/2026", "Grocery Store", 124.50, "Expense"},
+                {"07/06/2026", "Transit Pass", 55.00, "Expense"},
+                {"08/06/2026", "Freelance Gig", 350.00, "Income"}
             };
 
             for (Object[] row : data) {
@@ -186,6 +204,31 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to add transaction: " + e.getMessage());
         }
+    }
+
+    public static List<String[]> getAllTransactionsSorted(int userId) {
+        List<String[]> transactions = new ArrayList<>();
+        // Assuming date format is dd/mm/yyyy
+        String query = "SELECT transaction_date, description, amount, type FROM budgeting_info WHERE user_id = ? " +
+                       "ORDER BY substr(transaction_date, 7, 4) ASC, substr(transaction_date, 4, 2) ASC, substr(transaction_date, 1, 2) ASC";
+        Connection conn = getConnection();
+        if (conn == null) return transactions;
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    transactions.add(new String[]{
+                        rs.getString("transaction_date"),
+                        rs.getString("description"),
+                        String.format("%.2f", rs.getDouble("amount")),
+                        rs.getString("type")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to fetch transactions: " + e.getMessage());
+        }
+        return transactions;
     }
 
     public static List<String[]> getAllUsers() {
@@ -292,8 +335,7 @@ public class DatabaseManager {
     }
 
     public static void deleteTransaction(int userId, int transactionIndex) {
-        // This is a bit tricky because 'transactionIndex' from UI might not match 'transaction_id'
-        // For simplicity in this TUI, we'll fetch the IDs and delete the Nth one
+        // Fetch the IDs and delete the Nth one for the given user
         String findIdQuery = "SELECT transaction_id FROM budgeting_info WHERE user_id = ? ORDER BY transaction_id DESC LIMIT 1 OFFSET ?";
         Connection conn = getConnection();
         if (conn == null) return;
@@ -320,5 +362,24 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to delete transaction: " + e.getMessage());
         }
+    }
+
+    public static List<String[]> getTopSavers() {
+        List<String[]> savers = new ArrayList<>();
+        String query = "SELECT username, savings_rate FROM users ORDER BY savings_rate DESC LIMIT 10";
+        Connection conn = getConnection();
+        if (conn == null) return savers;
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                savers.add(new String[]{
+                    rs.getString("username"),
+                    String.format("%.2f", rs.getDouble("savings_rate") * 100)
+                });
+            }
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to fetch top savers: " + e.getMessage());
+        }
+        return savers;
     }
 }

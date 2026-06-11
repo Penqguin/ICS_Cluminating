@@ -27,7 +27,8 @@ public class Login {
             System.out.println("[1] Login");
             System.out.println("[2] Create Account");
             System.out.println("[3] Delete Account");
-            System.out.println("[4] Exit");
+            System.out.println("[4] Message Viewer");
+            System.out.println("[5] Exit");
             System.out.print("\nSelect an option: ");
 
             String choice = Utils.sc.nextLine().trim();
@@ -43,6 +44,9 @@ public class Login {
                     handleDeleteAccount();
                     break;
                 case "4":
+                    viewMessages();
+                    break;
+                case "5":
                     System.out.println("Exiting application...");
                     System.exit(0);
                     break;
@@ -70,8 +74,28 @@ public class Login {
 
             int userId = User.login(username, password);
             if (userId != -1) {
-                System.out.println("Login successful!");
-                Utils.pauseScreen();
+                User user = User.getUserById(userId);
+                if (user != null && user.isTwoFactorEnabled()) {
+                    System.out.println("\n[2FA Required] A verification code has been sent to " + user.getContactDestination());
+                    user.enableTwoFactor(user.getContactDestination()); // Regernerate code
+                    logVerificationCode(user.getContactDestination(), user.getVerificationCode());
+                    
+                    System.out.print("Enter 6-digit verification code: ");
+                    String code = Utils.sc.nextLine().trim();
+                    if (user.verifyCode(code)) {
+                        System.out.println("2FA Verified!");
+                    } else {
+                        System.out.println("Invalid verification code. Login failed.");
+                        Utils.pauseScreen();
+                        return -1;
+                    }
+                }
+                
+                if (user != null) {
+                    user.showLoadingScreen();
+                    System.out.println("\n[Advice] " + user.getAdvice());
+                    Utils.pauseScreen();
+                }
                 return userId;
             } else {
                 System.out.println("Incorrect password.");
@@ -160,9 +184,33 @@ public class Login {
             }
         }
 
+        System.out.print("Enable Two-Factor Authentication? (y/n): ");
+        boolean enable2FA = Utils.sc.nextLine().trim().toLowerCase().startsWith("y");
+
         int userId = User.createAccount(username, password, emailOrPhone);
         if (userId != -1) {
+            User user = User.getUserById(userId);
+            if (enable2FA && user != null) {
+                user.enableTwoFactor(emailOrPhone);
+                logVerificationCode(emailOrPhone, user.getVerificationCode());
+                
+                System.out.println("\n[2FA Setup] A verification code has been sent to " + emailOrPhone);
+                System.out.print("Enter verification code to confirm: ");
+                String code = Utils.sc.nextLine().trim();
+                
+                if (user.verifyCode(code)) {
+                    System.out.println("2FA Enabled successfully!");
+                    user.saveToDatabase(userId);
+                } else {
+                    System.out.println("Verification failed. 2FA will not be enabled.");
+                    // We don't save, so it stays disabled
+                }
+            }
             System.out.println("User created successfully!");
+            if (user != null) {
+                user.showLoadingScreen();
+                System.out.println("\n[Advice] " + user.getAdvice());
+            }
             Utils.pauseScreen();
             return userId;
         } else {
@@ -170,5 +218,39 @@ public class Login {
             Utils.pauseScreen();
             return -1;
         }
+    }
+
+    private static void logVerificationCode(String contact, String code) {
+        String safeContact = contact.replaceAll("[^a-zA-Z0-9@.]", "_");
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("messages", safeContact + ".txt");
+            java.nio.file.Files.createDirectories(path.getParent());
+            String message = String.format("[%s] Your verification code is: %s\n", 
+                java.time.LocalDateTime.now().toString().replace('T', ' ').substring(0, 19), code);
+            java.nio.file.Files.write(path, message.getBytes(), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (java.io.IOException e) {
+            System.err.println("[Error] Failed to log verification code: " + e.getMessage());
+        }
+    }
+
+    private static void viewMessages() {
+        System.out.print("Enter contact (email/phone) to view messages: ");
+        String contact = Utils.sc.nextLine().trim();
+        String safeContact = contact.replaceAll("[^a-zA-Z0-9@.]", "_");
+        java.io.File file = new java.io.File("messages/" + safeContact + ".txt");
+        if (file.exists()) {
+            try {
+                java.util.List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
+                System.out.println("\n--- Messages for " + contact + " ---");
+                for (String line : lines) {
+                    System.out.println(line);
+                }
+            } catch (java.io.IOException e) {
+                System.out.println("Error reading messages.");
+            }
+        } else {
+            System.out.println("No messages found for this contact.");
+        }
+        Utils.pauseScreen();
     }
 }

@@ -40,6 +40,9 @@ public class Home {
       System.out.printf("    Net Balance: $%,12.2f\n", totalBalance);
       System.out.printf("   Total Income: $%,12.2f\n", totalIncome);
       System.out.printf(" Total Expenses: $%,12.2f\n", totalExpenses);
+      
+      double inflationRate = InflationFetcher.getCanadaInflationRate();
+      System.out.printf("  CAN Inflation: %12.1f%%\n", inflationRate);
       System.out.println("=========================================================");
 
       // 3. Mini 2D Array Quick-View (Recent Activities)
@@ -62,37 +65,34 @@ public class Home {
       // 4. Navigation Menu
       System.out.println("  1. [View Full Ledger]       2. [Add Income/Expense]");
       System.out.println("  3. [Analyze Graphs/Trends]  4. [Practice Problems]");
-      System.out.println("  5. [Logout and Exit]");
+      System.out.println("  5. [Global Leaderboard]     6. [Logout and Exit]");
       System.out.println("=========================================================");
-      System.out.print("  Select an option (1-5): ");
+      System.out.print("  Select an option (1-6): ");
 
       String choice = sc.nextLine().trim();
 
       switch (choice) {
         case "1":
-          Budget.displayFullLedger();
+          Budget.displayFullLedger(userId);
           break;
         case "2":
-          // modifyTransactions();
-          System.out.println("\n  Opening transaction manager...");
-          Utils.pauseScreen();
+          Budget.handleAddition(userId);
           break;
         case "3":
-          // viewVisualizations();
-          System.out.println("\n  Generating financial trends...");
-          Utils.pauseScreen();
+          Budget.displayGraphs(userId);
           break;
         case "4":
-          // runProblems();
-          System.out.println("\n  Loading sample mathematical practice modules...");
-          Utils.pauseScreen();
+          Practice.runProblems();
           break;
         case "5":
+          Leaderboard.display();
+          break;
+        case "6":
           System.out.println("\n  Logging out secure session. Goodbye!");
           inHomepage = false;
           break;
         default:
-          System.out.println("\n  [!] Invalid choice. Please select an option from 1 to 5.");
+          System.out.println("\n  [!] Invalid choice.");
           Utils.pauseScreen();
           break;
       }
