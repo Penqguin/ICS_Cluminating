@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 
 public class DatabaseManager {
     // Persistent SQLite database file
@@ -262,8 +263,8 @@ public class DatabaseManager {
 
     public static String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
+            MessageDigest md = MessageDigest.getInstance("SHA-384");
+            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
@@ -274,6 +275,19 @@ public class DatabaseManager {
         } catch (NoSuchAlgorithmException e) {
             System.err.println("[Error] Hashing algorithm not found.");
             return password; // Fallback to plain text (not recommended)
+        }
+    }
+
+    public static void deleteUser(int userId) {
+        String query = "DELETE FROM users WHERE user_id = ?";
+        Connection conn = getConnection();
+        if (conn == null) return;
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            pstmt.executeUpdate();
+            System.out.println("[Database] User deleted successfully.");
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to delete user: " + e.getMessage());
         }
     }
 
