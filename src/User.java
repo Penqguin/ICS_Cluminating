@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class User {
     private String username;
@@ -14,6 +15,9 @@ public class User {
     private String verificationCode;
     private ArrayList<String> costStreams;
     private ArrayList<String> revenueStreams;
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+
     // Predefined advice messages for users!
     private final List<String> advice = List.of(
             "Use a strong password and change it regularly.",
@@ -42,6 +46,62 @@ public class User {
         this.twoFactorEnabled = twoFactorEnabled;
         this.costStreams = costStreams;
         this.revenueStreams = revenueStreams;
+    }
+
+    // Static User Management Functions
+    public static int login(String username, String password) {
+        if (DatabaseManager.verifyPassword(username, password)) {
+            return DatabaseManager.getUserIdByUsername(username);
+        }
+        return -1;
+    }
+
+    public static int createAccount(String username, String password, String emailOrPhone) {
+        if (!exists(username) && isValidPassword(password) && (isValidEmail(emailOrPhone) || isValidPhone(emailOrPhone))) {
+            DatabaseManager.createUser(username, password, emailOrPhone);
+            return DatabaseManager.getUserIdByUsername(username);
+        }
+        return -1;
+    }
+
+    public static void deleteAccount(int userId) {
+        DatabaseManager.deleteUser(userId);
+    }
+
+    public static boolean exists(String username) {
+        return DatabaseManager.usernameExists(username);
+    }
+
+    public static List<String[]> getAllUsers() {
+        return DatabaseManager.getAllUsers();
+    }
+
+    // Validation Methods
+    public static boolean isValidEmail(String email) {
+        return EMAIL_PATTERN.matcher(email).matches();
+    }
+
+    public static boolean isValidPhone(String phone) {
+        return phone.matches("\\d{10,15}");
+    }
+
+    public static boolean isValidPassword(String password) {
+        if (password.length() < 8) return false;
+        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+        String specialChars = "!@#$%^&*()-_=+";
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isLowerCase(c)) hasLower = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+            
+            if (c < 32) return false;
+        }
+
+        if (!(hasUpper && hasLower && hasDigit && hasSpecial)) return false;
+
+        return !password.contains("\\");
     }
 
     public String getUsername() {

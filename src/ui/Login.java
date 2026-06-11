@@ -1,12 +1,11 @@
 package src.ui;
 
 import src.DatabaseManager;
+import src.User;
 import src.ui.Utils;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class Login {
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     public static int promptForUser() {
         while (true) {
@@ -14,7 +13,7 @@ public class Login {
             System.out.println("=== Welcome to Financial App ===");
             System.out.println();
 
-            List<String[]> users = DatabaseManager.getAllUsers();
+            List<String[]> users = User.getAllUsers();
             if (users.isEmpty()) {
                 System.out.println("No existing users found.");
             } else {
@@ -65,14 +64,15 @@ public class Login {
             return -1;
         }
 
-        if (DatabaseManager.usernameExists(username)) {
+        if (User.exists(username)) {
             System.out.print("Enter password: ");
             String password = Utils.sc.nextLine().trim();
 
-            if (DatabaseManager.verifyPassword(username, password)) {
+            int userId = User.login(username, password);
+            if (userId != -1) {
                 System.out.println("Login successful!");
                 Utils.pauseScreen();
-                return DatabaseManager.getUserIdByUsername(username);
+                return userId;
             } else {
                 System.out.println("Incorrect password.");
                 Utils.pauseScreen();
@@ -105,7 +105,7 @@ public class Login {
         System.out.printf("Are you sure you want to delete user '%s'? (y/n): ", username);
         String confirm = Utils.sc.nextLine().trim().toLowerCase();
         if (confirm.equals("y") || confirm.equals("yes")) {
-            DatabaseManager.deleteUser(userId);
+            User.deleteAccount(userId);
             System.out.println("Account deleted successfully.");
         } else {
             System.out.println("Deletion cancelled.");
@@ -129,7 +129,7 @@ public class Login {
                 System.out.printf("Username: %s%n", username);
             }
 
-            if (DatabaseManager.usernameExists(username)) {
+            if (User.exists(username)) {
                 System.out.println("Username already exists. Please try another.");
                 Utils.pauseScreen();
                 username = ""; // Clear to prompt again
@@ -142,7 +142,7 @@ public class Login {
         while (true) {
             System.out.print("Enter password (min 8 chars, upper, lower, digit, special, no escapes): ");
             password = Utils.sc.nextLine().trim();
-            if (isValidPassword(password)) {
+            if (User.isValidPassword(password)) {
                 break;
             } else {
                 System.out.println("Invalid password. Must be at least 8 chars, contain uppercase, lowercase, digit, and special char (!@#$%^&*()-_=+), and no backslashes/escapes.");
@@ -153,49 +153,22 @@ public class Login {
         while (true) {
             System.out.print("Enter email or phone: ");
             emailOrPhone = Utils.sc.nextLine().trim();
-            if (isValidEmail(emailOrPhone) || isValidPhone(emailOrPhone)) {
+            if (User.isValidEmail(emailOrPhone) || User.isValidPhone(emailOrPhone)) {
                 break;
             } else {
                 System.out.println("Invalid format. Must be a valid email or a 10-15 digit phone number.");
             }
         }
 
-        DatabaseManager.createUser(username, password, emailOrPhone);
-        System.out.println("User created successfully!");
-        Utils.pauseScreen();
-        return DatabaseManager.getUserIdByUsername(username);
-    }
-
-    private static boolean isValidEmail(String email) {
-        return EMAIL_PATTERN.matcher(email).matches();
-    }
-
-    private static boolean isValidPhone(String phone) {
-        return phone.matches("\\d{10,15}");
-    }
-
-    private static boolean isValidPassword(String password) {
-        if (password.length() < 8) return false;
-        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
-        String specialChars = "!@#$%^&*()-_=+";
-
-        for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) hasUpper = true;
-            else if (Character.isLowerCase(c)) hasLower = true;
-            else if (Character.isDigit(c)) hasDigit = true;
-            else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
-            
-            // Check for control characters (ASCII 0-31)
-            if (c < 32) return false;
+        int userId = User.createAccount(username, password, emailOrPhone);
+        if (userId != -1) {
+            System.out.println("User created successfully!");
+            Utils.pauseScreen();
+            return userId;
+        } else {
+            System.out.println("Failed to create user. Please check your details and try again.");
+            Utils.pauseScreen();
+            return -1;
         }
-
-        if (!(hasUpper && hasLower && hasDigit && hasSpecial)) return false;
-
-        // Block all backslashes to ensure no literal escape sequences are present
-        if (password.contains("\\")) {
-            return false;
-        }
-
-        return true;
     }
 }
