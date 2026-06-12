@@ -1,6 +1,6 @@
 package src.ui;
 
-import Utils.*;
+import src.ui.Utils.*;
 
 import src.DatabaseManager;
 import java.util.List;
