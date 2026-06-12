@@ -1,14 +1,16 @@
 package src.ui;
 
+import Utils.*;
+
 import src.DatabaseManager;
 import java.util.List;
 
 public class Leaderboard {
     public static void display() {
         Utils.clearScreen();
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         System.out.println("                GLOBAL SAVINGS LEADERBOARD               ");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         System.out.println("  Rank | Username           | Savings Rate (%)           ");
         System.out.println("  -----+--------------------+----------------------------");
 
@@ -24,9 +26,9 @@ public class Leaderboard {
         }
 
         System.out.println("  -----+--------------------+----------------------------");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         System.out.println("  Savings Rate = (Total Income - Total Expenses) / Income");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         Utils.pauseScreen();
     }
 }

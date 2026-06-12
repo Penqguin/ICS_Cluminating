@@ -45,14 +45,14 @@ public class Budget {
         src.User user = src.User.getUserById(userId);
 
         // 1. Header & Navigation Path
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         System.out.println("  DASHBOARD > FULL TRANSACTION LEDGER                    ");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
 
         // 2. Local Performance Metrics
         System.out.printf("  [Total Records: %3d]   [Incomes: $%,10.2f]   [Expenses: $%,10.2f]\n", 
                           recentTransactions.size(), totalIncome, totalExpenses);
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
 
         // 2.5 Recurring Streams Section
         if (user != null) {
@@ -88,11 +88,11 @@ public class Budget {
         }
 
         System.out.println("  -----+------------+----------------------+-------------+---------");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
 
         // 4. Ledger Context Actions
         System.out.println("  [A] Add New  | [D] Delete | [C] Change items | [G] Graphs | [B] Back");
-        System.out.println("=========================================================");
+        System.out.println(Utils.equalSignLine);
         System.out.print("  Execute Command: ");
 
         String command = sc.nextLine().trim().toUpperCase();
