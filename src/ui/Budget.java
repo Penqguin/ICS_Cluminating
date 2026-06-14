@@ -174,6 +174,7 @@ public class Budget {
       if (user == null) return;
 
       Utils.clearScreen();
+      System.out.println(Utils.equalSignLine);
       System.out.println("=== Budget Stream Setup ===");
       System.out.println("Define your recurring income and cost streams.");
 
