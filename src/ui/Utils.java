@@ -24,16 +24,7 @@ public class Utils {
       "                              |  $$$$$$/              \n" +
       "                               \\______/               \n";
     
-  public static final String equalSignLine = dashGenerator(53, '=');
-  public static final String dashLine = dashGenerator(53, '-');
-
-  public static String dashGenerator(int length, char ch) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
-      sb.append(ch);
-    }
-    return sb.toString();
-  }
+  public static final int STANDARD_WIDTH = 53;
 
   public static void clearScreen() {
     System.out.print("\033[H\033[2J");

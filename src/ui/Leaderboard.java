@@ -8,9 +8,9 @@ import java.util.List;
 public class Leaderboard {
     public static void display() {
         Utils.clearScreen();
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("                GLOBAL SAVINGS LEADERBOARD               ");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("  Rank | Username           | Savings Rate (%)           ");
         System.out.println("  -----+--------------------+----------------------------");
 
@@ -26,9 +26,9 @@ public class Leaderboard {
         }
 
         System.out.println("  -----+--------------------+----------------------------");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("  Savings Rate = (Total Income - Total Expenses) / Income");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         Utils.pauseScreen();
     }
 }

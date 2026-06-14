@@ -45,14 +45,14 @@ public class Budget {
         src.User user = src.User.getUserById(userId);
 
         // 1. Header & Navigation Path
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("  DASHBOARD > FULL TRANSACTION LEDGER                    ");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
         // 2. Local Performance Metrics
         System.out.printf("  [Total Records: %3d]   [Incomes: $%,10.2f]   [Expenses: $%,10.2f]\n", 
                           recentTransactions.size(), totalIncome, totalExpenses);
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
         // 2.5 Recurring Streams Section
         if (user != null) {
