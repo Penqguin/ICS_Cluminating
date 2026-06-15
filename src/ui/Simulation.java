@@ -80,7 +80,7 @@ public class Simulation {
             System.out.printf("Current Expenses: $%,12.2f%n", simulatedExpense);
             System.out.printf("Current I/E Ratio: %.4f%n", currentIERatio);
             
-            if (Math.abs(currentIERatio - originalIERatio) <= Math.abs(originalIERatio)*0.02) {
+            if (currentIERatio >= originalIERatio) {
                 System.out.println("Status: I/E Ratio Goal Met!");
             } else {
                 System.out.printf("Gap to Goal: %.4f%n", (originalIERatio - currentIERatio));
