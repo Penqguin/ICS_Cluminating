@@ -3,10 +3,49 @@ package src.ui;
 import src.DatabaseManager;
 import src.ui.Utils;
 import java.util.Random;
+import java.io.*;
+import java.nio.file.*;
 
 public class Simulation {
 
+    private static final String CONFIG_PATH = "/Users/michaelmaddison/.gemini/tmp/ics-culminating/config/skip_simulation_instructions.txt";
+
+    private static boolean shouldShowInstructions() {
+        return !new File(CONFIG_PATH).exists();
+    }
+
+    private static void setSkipInstructions(boolean skip) {
+        if (skip) {
+            try { new File(CONFIG_PATH).createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+        } else {
+            new File(CONFIG_PATH).delete();
+        }
+    }
+
+    private static void showInstructions() {
+        Utils.clearScreen();
+        System.out.println("--- Welcome to the Financial Simulation ---");
+        System.out.println("In this simulation, you will see how inflation and salary changes");
+        System.out.println("affect your I/E (Income/Expense) ratio.");
+        System.out.println("\nYour goal is to maintain or improve your I/E ratio");
+        System.out.println("by adding, removing, or modifying your expenses.");
+        System.out.println("\nInstructions:");
+        System.out.println("1. Use the menu to adjust your expenses.");
+        System.out.println("2. Aim for a I/E ratio close to your original.");
+        System.out.println("3. Finish the simulation to see your final score and tips.");
+        System.out.println("\n-------------------------------------------");
+        System.out.print("Don't show instructions again? (y/n): ");
+        if (Utils.sc.nextLine().trim().equalsIgnoreCase("y")) {
+            setSkipInstructions(true);
+        }
+        Utils.pauseScreen();
+    }
+
     public static void runSimulation(int userId) {
+        if (shouldShowInstructions()) {
+            showInstructions();
+        }
+
         // Data Gathering
         double currentIncome = DatabaseManager.getTotalIncome(userId);
         double currentExpense = DatabaseManager.getTotalExpenses(userId);
@@ -18,12 +57,12 @@ public class Simulation {
             return;
         }
 
-        double originalPERatio = currentIncome / currentExpense;
+        double originalIERatio = currentIncome / currentExpense;
 
         // Simulation Logic
         Random rand = new Random();
-        double inflation = 0.0 + (0.05 - 0.0) * rand.nextDouble(); // 0% to 5%
-        double salaryIncrease = 0.0 + (0.03 - 0.0) * rand.nextDouble(); // 0% to 3%
+        double inflation = 0.02 + (0.10 - 0.0) * rand.nextDouble(); // 2% to 10%
+        double salaryIncrease = 0.0 + (0.02 - 0.0) * rand.nextDouble(); // 0% to 2%
 
         double simulatedIncome = currentIncome * (1 + salaryIncrease);
         double simulatedExpense = currentExpense * (1 + inflation);
@@ -33,18 +72,18 @@ public class Simulation {
             Utils.clearScreen();
             System.out.println(Utils.HEADER_BANNER);
             System.out.println("--- Interactive Financial Simulation ---");
-            System.out.println("Goal P/E Ratio: " + String.format("%.4f", originalPERatio));
+            System.out.println("Goal I/E Ratio: " + String.format("%.4f", originalIERatio));
             System.out.println();
             
-            double currentPERatio = simulatedIncome / simulatedExpense;
+            double currentIERatio = simulatedIncome / simulatedExpense;
             System.out.printf("Current Income: $%,12.2f%n", simulatedIncome);
             System.out.printf("Current Expenses: $%,12.2f%n", simulatedExpense);
-            System.out.printf("Current P/E Ratio: %.4f%n", currentPERatio);
+            System.out.printf("Current I/E Ratio: %.4f%n", currentIERatio);
             
-            if (currentPERatio >= originalPERatio) {
-                System.out.println("Status: P/E Ratio Goal Met!");
+            if (Math.abs(currentIERatio - originalIERatio) <= Math.abs(originalIERatio)*0.02) {
+                System.out.println("Status: I/E Ratio Goal Met!");
             } else {
-                System.out.printf("Gap to Goal: %.4f%n", (originalPERatio - currentPERatio));
+                System.out.printf("Gap to Goal: %.4f%n", (originalIERatio - currentIERatio));
             }
             
             System.out.println("\n--- Actions ---");
@@ -78,7 +117,13 @@ public class Simulation {
         // Final Tips
         Utils.clearScreen();
         System.out.println("--- Simulation Complete ---");
-        System.out.println("Final P/E Ratio: " + String.format("%.4f", (simulatedIncome / simulatedExpense)));
+        double finalPERatio = simulatedIncome / simulatedExpense;
+        System.out.println("Final I/E Ratio: " + String.format("%.4f", finalPERatio));
+
+        if (Math.abs(finalPERatio - originalIERatio) / originalIERatio <= 0.02) {
+            System.out.println("\n*** Congratulations! You are within 2% of your goal I/E ratio! ***");
+        }
+
         System.out.println("\n--- Tips for Managing Financial Changes ---");
         System.out.println("- Prioritize high-interest debt repayment.");
         System.out.println("- Look for opportunities to diversify revenue streams.");
