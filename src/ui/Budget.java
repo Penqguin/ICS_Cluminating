@@ -60,16 +60,16 @@ public class Budget {
         List<Transaction> recentTransactions = DatabaseManager.getRecentTransactions(userId);
         src.User user = src.User.getUserById(userId);
 
-        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+        System.out.println("=".repeat(Utils.LARGER_STANDARD_WIDTH_LINE));
         System.out.println("  DASHBOARD > FULL TRANSACTION LEDGER                    ");
-        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+        System.out.println("=".repeat(Utils.LARGER_STANDARD_WIDTH_LINE));
 
         System.out.printf("  [Total Records: %3d]   [Incomes: $%,10.2f]   [Expenses: $%,10.2f]\n", 
                           recentTransactions.size(), totalIncome, totalExpenses);
-        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+        System.out.println("=".repeat(Utils.LARGER_STANDARD_WIDTH_LINE));
 
-        System.out.println("  ID   | Date       | Description          | Amount      | Type    ");
-        System.out.println("  -----+------------+----------------------+-------------+---------");
+        System.out.println("  ID   | Date           | Description          | Amount      | Type       ");
+        System.out.println("  -----+----------------+----------------------+-------------+------------");
 
         if (recentTransactions.isEmpty()) {
             System.out.println("  No transactions found. Use [A] to add your first entry!");
@@ -81,11 +81,11 @@ public class Budget {
             }
         }
 
-        System.out.println("  -----+------------+----------------------+-------------+---------");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("  -----+----------------+----------------------+-------------+------------");
+        System.out.println("=".repeat(Utils.LARGER_STANDARD_WIDTH_LINE));
 
         System.out.println("  [A] Add New  | [D] Delete | [G] Graphs | [B] Back");
-        System.out.println(Utils.equalSignLine);
+        System.out.println("=".repeat(Utils.LARGER_STANDARD_WIDTH_LINE));
         System.out.print("  Execute Command: ");
 
         String command = sc.nextLine().trim().toUpperCase();
@@ -107,6 +107,10 @@ public class Budget {
                 Utils.pauseScreen();
                 break;
             case "G":
+                System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+                System.out.println("  DASHBOARD > FULL TRANSACTION LEDGER > GRAPHS/TRENDS");
+                System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+
                 displayGraphs(userId);
                 break;
             case "B":
@@ -176,7 +180,7 @@ public class Budget {
       double income = DatabaseManager.getTotalIncome(userId);
       double expenses = DatabaseManager.getTotalExpenses(userId);
 
-      System.out.println("=== Financial Visualizations ===");
+    //   System.out.println("=== Financial Visualizations ===");
       System.out.printf("Total Income:   $%,.2f\n", income);
       System.out.printf("Total Expenses: $%,.2f\n", expenses);
       System.out.println();
@@ -187,7 +191,7 @@ public class Budget {
 
       int incomeWidth = (int) ((income / max) * totalWidth);
       int expenseWidth = (int) ((expenses / max) * totalWidth);
-
+      System.out.println("-".repeat(Utils.STANDARD_WIDTH));
       System.out.print("Income:   ");
       for (int i = 0; i < incomeWidth; i++) System.out.print("#");
       System.out.println();
@@ -195,6 +199,7 @@ public class Budget {
       System.out.print("Expenses: ");
       for (int i = 0; i < expenseWidth; i++) System.out.print("!");
       System.out.println();
+      System.out.println("-".repeat(Utils.STANDARD_WIDTH));
 
       System.out.println("\nLegend: # = Income, ! = Expense");
 

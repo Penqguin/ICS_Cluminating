@@ -17,8 +17,11 @@ public class Settings {
         boolean inSettings = true;
         while (inSettings) {
             Utils.clearScreen();
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
             System.out.println(Utils.HEADER_BANNER);
-            System.out.println("--- Account Settings ---");
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+            System.out.println("  Dashboard > Account Settings");
+            System.out.println("-".repeat(Utils.STANDARD_WIDTH));
             System.out.println("1. Change Username");
             System.out.println("2. Change Password");
             System.out.println("3. Toggle 2FA");

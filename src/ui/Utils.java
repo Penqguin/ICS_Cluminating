@@ -25,10 +25,8 @@ public class Utils {
       "                               \\______/               \n";
     
   /** Standard UI width for consistent formatting */
-  public static final int STANDARD_WIDTH = 53;
-
-  /** Repeating equal sign line for visual separation */
-  public static final String equalSignLine = "=================================================================";
+  public static final int STANDARD_WIDTH = 56;
+  public static final int LARGER_STANDARD_WIDTH_LINE = 74;
 
   /**
    * Clears the terminal screen using ANSI escape codes.

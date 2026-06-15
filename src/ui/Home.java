@@ -78,6 +78,10 @@ public class Home {
           Budget.handleAddition(userId);
           break;
         case "3":
+          System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+          System.out.println("  DASHBOARD > GRAPHS/TRENDS");
+          System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+
           Budget.displayGraphs(userId);
           break;
         case "4":

@@ -18,7 +18,9 @@ public class Login {
     public static int promptForUser() {
         while (true) {
             Utils.clearScreen();
-            System.out.println("=== Welcome to Financial App ===");
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+            System.out.println("                  WELCOME TO BUDGIE                   ");
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
             System.out.println();
 
             List<String[]> users = User.getAllUsers();

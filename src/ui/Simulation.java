@@ -47,6 +47,7 @@ public class Simulation {
      */
     private static void showInstructions() {
         Utils.clearScreen();
+        System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("--- Welcome to the Financial Simulation ---");
         System.out.println("In this simulation, you will see how inflation and salary changes");
         System.out.println("affect your I/E (Income/Expense) ratio.");
@@ -56,7 +57,7 @@ public class Simulation {
         System.out.println("1. Use the menu to adjust your expenses.");
         System.out.println("2. Aim for a I/E ratio close to your original.");
         System.out.println("3. Finish the simulation to see your final score and tips.");
-        System.out.println("\n-------------------------------------------");
+        System.out.println("\n" + "-".repeat(Utils.STANDARD_WIDTH));
         System.out.print("Don't show instructions again? (y/n): ");
         if (Utils.sc.nextLine().trim().equalsIgnoreCase("y")) {
             setSkipInstructions(true);
@@ -95,15 +96,17 @@ public class Simulation {
         boolean running = true;
         while (running) {
             Utils.clearScreen();
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
             System.out.println(Utils.HEADER_BANNER);
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
             System.out.println("--- Interactive Financial Simulation ---");
             System.out.println("Goal I/E Ratio: " + String.format("%.4f", originalIERatio));
             System.out.println();
             
             double currentIERatio = simulatedIncome / simulatedExpense;
-            System.out.printf("Current Income: $%,12.2f%n", simulatedIncome);
-            System.out.printf("Current Expenses: $%,12.2f%n", simulatedExpense);
-            System.out.printf("Current I/E Ratio: %.4f%n", currentIERatio);
+            System.out.printf("%-22s $%,12.2f%n", "Current Income:", simulatedIncome);
+            System.out.printf("%-22s $%,12.2f%n", "Current Expenses:", simulatedExpense);
+            System.out.printf("%-22s %12.4f%n", "Current I/E Ratio:", currentIERatio);
             
             if (currentIERatio >= originalIERatio) {
                 System.out.println("Status: I/E Ratio Goal Met!");

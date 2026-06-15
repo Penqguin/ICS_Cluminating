@@ -34,7 +34,9 @@ public class Practice {
         boolean inPractice = true;
         while (inPractice) {
             Utils.clearScreen();
-            System.out.println("=== Financial Literacy Practice ===");
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
+            System.out.println("  Dashboard > Financial Literacy Practice Problems");
+            System.out.println("=".repeat(Utils.STANDARD_WIDTH));
             System.out.println("Test your knowledge on budgeting and inflation!");
             System.out.println();
             System.out.println("1. Inflation Impact Problem");
