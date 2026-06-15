@@ -54,20 +54,20 @@ public class Budget {
                           recentTransactions.size(), totalIncome, totalExpenses);
         System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-        // 2.5 Recurring Streams Section
-        if (user != null) {
-            System.out.println("  RECURRING STREAMS:");
-            List<src.User.FinancialStream> rev = user.getRevenueStreams();
-            List<src.User.FinancialStream> cost = user.getCostStreams();
+        // // 2.5 Recurring Streams Section
+        // if (user != null) {
+        //     System.out.println("  RECURRING STREAMS:");
+        //     List<src.User.FinancialStream> rev = user.getRevenueStreams();
+        //     List<src.User.FinancialStream> cost = user.getCostStreams();
             
-            for (src.User.FinancialStream fs : rev) {
-                System.out.printf("  [REV] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
-            }
-            for (src.User.FinancialStream fs : cost) {
-                System.out.printf("  [EXP] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
-            }
-            System.out.println("  ---------------------------------------------------------");
-        }
+        //     for (src.User.FinancialStream fs : rev) {
+        //         System.out.printf("  [REV] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
+        //     }
+        //     for (src.User.FinancialStream fs : cost) {
+        //         System.out.printf("  [EXP] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
+        //     }
+        //     System.out.println("  ---------------------------------------------------------");
+        // }
 
         // 3. Main Data Table Frame
         System.out.println("  ID   | Date       | Description          | Amount      | Type    ");

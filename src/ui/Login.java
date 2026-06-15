@@ -76,10 +76,17 @@ public class Login {
             if (userId != -1) {
                 User user = User.getUserById(userId);
                 if (user != null && user.isTwoFactorEnabled()) {
-                    System.out.println("\n[2FA Required] A verification code has been sent to " + user.getContactDestination());
                     user.enableTwoFactor(user.getContactDestination()); // Regernerate code
                     logVerificationCode(user.getContactDestination(), user.getVerificationCode());
-                    
+                    // option to check messages to find the code
+                    System.out.println("\n[2FA Required] A verification code has been sent to " + user.getContactDestination() + ". Check messages? (y/n)");
+                    String choice = Utils.sc.nextLine().trim();
+                    switch (choice) {
+                        case "Y":
+                        case "y":
+                            viewMessages();
+                    }
+                    // ask user for verification code
                     System.out.print("Enter 6-digit verification code: ");
                     String code = Utils.sc.nextLine().trim();
                     if (user.verifyCode(code)) {
@@ -99,6 +106,11 @@ public class Login {
                 return userId;
             } else {
                 System.out.println("Incorrect password.");
+                System.out.print("Forgot password? (y/n): ");
+                String forgot = Utils.sc.nextLine().trim().toLowerCase();
+                if (forgot.equals("y") || forgot.equals("yes")) {
+                    
+                }
                 Utils.pauseScreen();
                 return -1;
             }
@@ -194,7 +206,15 @@ public class Login {
                 user.enableTwoFactor(emailOrPhone);
                 logVerificationCode(emailOrPhone, user.getVerificationCode());
                 
-                System.out.println("\n[2FA Setup] A verification code has been sent to " + emailOrPhone);
+                System.out.println("\n[2FA Setup] A verification code has been sent to " + emailOrPhone + ". Check messages? (y/n)");
+                
+                String choice = Utils.sc.nextLine().trim();
+                switch (choice) {
+                    case "Y":
+                    case "y":
+                        viewMessages();
+                }
+
                 System.out.print("Enter verification code to confirm: ");
                 String code = Utils.sc.nextLine().trim();
                 
@@ -251,6 +271,11 @@ public class Login {
         } else {
             System.out.println("No messages found for this contact.");
         }
+        Utils.pauseScreen();
+    }
+
+    private static void resetPassword(String contact) {
+        
         Utils.pauseScreen();
     }
 }
