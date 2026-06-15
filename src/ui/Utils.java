@@ -26,6 +26,8 @@ public class Utils {
     
   public static final int STANDARD_WIDTH = 53;
 
+  public static final String equalSignLine = "=================================================================";
+
   public static void clearScreen() {
     System.out.print("\033[H\033[2J");
     System.out.flush();
