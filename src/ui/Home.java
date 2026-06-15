@@ -59,10 +59,11 @@ public class Home {
 
       // 4. Navigation Menu
       System.out.println("  1. [View Full Ledger]       2. [Add Income/Expense]");
-      System.out.println("  3. [Analyze Graphs/Trends]  4. [Practice Problems]");
-      System.out.println("  5. [Global Leaderboard]     6. [Logout and Exit]");
+      System.out.println("  3. [Run Budget Simulation]  4. [Practice Problems]");
+      System.out.println("  5. [Global Leaderboard]     6. [Settings]");
+      System.out.println("  7. [Logout and Exit]");
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
-      System.out.print("  Select an option (1-6): ");
+      System.out.print("  Select an option (1-7): ");
 
       String choice = sc.nextLine().trim();
 
@@ -74,7 +75,7 @@ public class Home {
           Budget.handleAddition(userId);
           break;
         case "3":
-          Budget.displayGraphs(userId);
+          Simulation.runSimulation(userId);
           break;
         case "4":
           Practice.runProblems();
@@ -83,6 +84,9 @@ public class Home {
           Leaderboard.display();
           break;
         case "6":
+          Simulation.runSimulation(userId);
+          break;
+        case "7":
           System.out.println("\n  Logging out secure session. Goodbye!");
           inHomepage = false;
           break;
