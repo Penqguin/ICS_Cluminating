@@ -1,97 +1,90 @@
 package src.ui;
 
 import src.DatabaseManager;
+import src.model.Transaction;
 import java.util.Scanner;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Manages budget-related operations: transaction ledger, graphs, and scatterplots.
+ */
 public class Budget {
   private static final Scanner sc = Utils.sc;
 
+  /**
+   * Parses a date input in various formats (DD, DD/MM, DD/MM/YYYY) into DD/MM/YYYY.
+   * @param input The date input string
+   * @return Formatted date string in DD/MM/YYYY
+   */
   public static String parseDate(String input) {
-    LocalDate now = LocalDate.now();
     try {
+        int day, month, year;
         if (input.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
             String[] parts = input.split("/");
-            return String.format("%02d/%02d/%d", Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+            day = Integer.parseInt(parts[0]);
+            month = Integer.parseInt(parts[1]);
+            year = Integer.parseInt(parts[2]);
         } else if (input.matches("\\d{1,2}/\\d{1,2}")) {
             String[] parts = input.split("/");
-            return String.format("%02d/%02d/%d", Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), now.getYear());
+            day = Integer.parseInt(parts[0]);
+            month = Integer.parseInt(parts[1]);
+            year = LocalDate.now().getYear();
         } else if (input.matches("\\d{1,2}")) {
-            return String.format("%02d/%02d/%d", Integer.parseInt(input), now.getMonthValue(), now.getYear());
+            day = Integer.parseInt(input);
+            month = LocalDate.now().getMonthValue();
+            year = LocalDate.now().getYear();
+        } else {
+            return null;
         }
+        LocalDate.of(year, month, day);
+        return String.format("%02d/%02d/%d", day, month, year);
     } catch (Exception e) {
-        // Fallback to current
+        return null;
     }
-    return now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
   }
 
+  /**
+   * Displays the full transaction ledger with options to add, delete, or view graphs.
+   * @param userId The user ID
+   */
   public static void displayFullLedger(int userId) {
     boolean inLedger = true;
-
-    // Forced initial setup if no transactions exist
-    if (DatabaseManager.getRecentTransactions(userId).isEmpty()) {
-        setupInitialStreams(userId);
-    }
 
     while (inLedger) {
         Utils.clearScreen();
 
-        // Fetch dynamic data from database
         double totalIncome = DatabaseManager.getTotalIncome(userId);
         double totalExpenses = DatabaseManager.getTotalExpenses(userId);
-        List<String[]> recentTransactions = DatabaseManager.getRecentTransactions(userId);
+        List<Transaction> recentTransactions = DatabaseManager.getRecentTransactions(userId);
         src.User user = src.User.getUserById(userId);
 
-        // 1. Header & Navigation Path
         System.out.println("=".repeat(Utils.STANDARD_WIDTH));
         System.out.println("  DASHBOARD > FULL TRANSACTION LEDGER                    ");
         System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-        // 2. Local Performance Metrics
         System.out.printf("  [Total Records: %3d]   [Incomes: $%,10.2f]   [Expenses: $%,10.2f]\n", 
                           recentTransactions.size(), totalIncome, totalExpenses);
         System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-        // // 2.5 Recurring Streams Section
-        // if (user != null) {
-        //     System.out.println("  RECURRING STREAMS:");
-        //     List<src.User.FinancialStream> rev = user.getRevenueStreams();
-        //     List<src.User.FinancialStream> cost = user.getCostStreams();
-            
-        //     for (src.User.FinancialStream fs : rev) {
-        //         System.out.printf("  [REV] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
-        //     }
-        //     for (src.User.FinancialStream fs : cost) {
-        //         System.out.printf("  [EXP] %-15s | $%10.2f | %-10s\n", fs.getName(), fs.getAmount(), fs.getFrequency());
-        //     }
-        //     System.out.println("  ---------------------------------------------------------");
-        // }
-
-        // 3. Main Data Table Frame
         System.out.println("  ID   | Date       | Description          | Amount      | Type    ");
         System.out.println("  -----+------------+----------------------+-------------+---------");
 
-        for (int i = 0; i < recentTransactions.size(); i++) {
-            String[] transaction = recentTransactions.get(i);
-            int displayId = i + 1; 
-            String date = transaction[0];
-            String desc = transaction[1].trim();
-            String amtStr = transaction[2].trim();
-            String type = transaction[3].trim();
-
-            String typeIndicator = type.equalsIgnoreCase("Income") ? "[+]" : "[-]";
-
-            System.out.printf("  %03d  | %-10s | %-20s | $%10s | %-3s %-7s\n", 
-                              displayId, date, desc, amtStr, typeIndicator, type);
+        if (recentTransactions.isEmpty()) {
+            System.out.println("  No transactions found. Use [A] to add your first entry!");
+        } else {
+            for (int i = 0; i < recentTransactions.size(); i++) {
+                Transaction t = recentTransactions.get(i);
+                int displayId = i + 1; 
+                System.out.printf("  %03d  | %s\n", displayId, t.getDisplayString());
+            }
         }
 
         System.out.println("  -----+------------+----------------------+-------------+---------");
         System.out.println(Utils.equalSignLine);
 
-        // 4. Ledger Context Actions
-        System.out.println("  [A] Add New  | [D] Delete | [C] Change items | [G] Graphs | [B] Back");
+        System.out.println("  [A] Add New  | [D] Delete | [G] Graphs | [B] Back");
         System.out.println(Utils.equalSignLine);
         System.out.print("  Execute Command: ");
 
@@ -107,15 +100,11 @@ public class Budget {
                     int deleteIdx = Integer.parseInt(sc.nextLine()) - 1;
                     DatabaseManager.deleteTransaction(userId, deleteIdx);
                     
-                    // Update user's savings rate in DB after deletion
                     if (user != null) user.saveToDatabase(userId);
                 } catch (NumberFormatException e) {
                     System.out.println("  [!] Invalid ID.");
                 }
                 Utils.pauseScreen();
-                break;
-            case "C":
-                setupInitialStreams(userId);
                 break;
             case "G":
                 displayGraphs(userId);
@@ -132,11 +121,20 @@ public class Budget {
     }
   }
 
+  /**
+   * Handles adding a new transaction (income or expense) for the user.
+   * @param userId The user ID
+   */
   public static void handleAddition(int userId) {
       System.out.println("\n  --- ADD NEW ENTRY ---");
       System.out.print("  Enter Date (DD/MM/YYYY, DD/MM, or DD): ");
       String dateInput = sc.nextLine();
       String date = parseDate(dateInput);
+      if (date == null) {
+          System.out.println("  [!] Invalid date. Please enter a real calendar date.");
+          Utils.pauseScreen();
+          return;
+      }
       System.out.print("  Enter Description: ");
       String desc = sc.nextLine();
       System.out.print("  Enter Amount: ");
@@ -162,70 +160,18 @@ public class Budget {
       }
       DatabaseManager.addTransaction(userId, date, desc, amount, type);
 
-      // Update user's savings rate in DB
       src.User user = src.User.getUserById(userId);
       if (user != null) user.saveToDatabase(userId);
 
       Utils.pauseScreen();
   }
 
-  public static void setupInitialStreams(int userId) {
-      src.User user = src.User.getUserById(userId);
-      if (user == null) return;
-
-      Utils.clearScreen();
-      System.out.println(Utils.equalSignLine);
-      System.out.println("=== Budget Stream Setup ===");
-      System.out.println("Define your recurring income and cost streams.");
-
-      System.out.println("\n[1/2] Enter Income Streams (e.g., Salary, Freelance). Type 'done' for name when finished:");
-      while (true) {
-          System.out.print("  Stream Name: ");
-          String name = sc.nextLine().trim();
-          if (name.equalsIgnoreCase("done")) break;
-          
-          System.out.print("  Amount: ");
-          double amount = 0;
-          try {
-              amount = Double.parseDouble(sc.nextLine());
-          } catch (NumberFormatException e) {
-              System.out.println("  [!] Invalid amount. Skipping.");
-              continue;
-          }
-          
-          System.out.print("  Frequency (Weekly, Monthly, Yearly): ");
-          String freq = sc.nextLine().trim();
-          
-          user.addRevenueStream(new src.User.FinancialStream(name, amount, freq));
-      }
-
-      System.out.println("\n[2/2] Enter Cost Streams (e.g., Rent, Groceries). Type 'done' for name when finished:");
-      while (true) {
-          System.out.print("  Stream Name: ");
-          String name = sc.nextLine().trim();
-          if (name.equalsIgnoreCase("done")) break;
-          
-          System.out.print("  Amount: ");
-          double amount = 0;
-          try {
-              amount = Double.parseDouble(sc.nextLine());
-          } catch (NumberFormatException e) {
-              System.out.println("  [!] Invalid amount. Skipping.");
-              continue;
-          }
-          
-          System.out.print("  Frequency (Weekly, Monthly, Yearly): ");
-          String freq = sc.nextLine().trim();
-          
-          user.addCostStream(new src.User.FinancialStream(name, amount, freq));
-      }
-
-      user.saveToDatabase(userId);
-      System.out.println("\nStreams saved successfully!");
-      Utils.pauseScreen();
-  }
-
+  /**
+   * Displays visual bar chart comparing income vs expenses, plus savings rate.
+   * @param userId The user ID
+   */
   public static void displayGraphs(int userId) {
+
       Utils.clearScreen();
       double income = DatabaseManager.getTotalIncome(userId);
       double expenses = DatabaseManager.getTotalExpenses(userId);
@@ -265,8 +211,13 @@ public class Budget {
       }
   }
 
+  /**
+   * Displays an ASCII scatterplot of balance over time for a selected period.
+   * Uses a 2D char array to render the plot.
+   * @param userId The user ID
+   */
   public static void displayScatterplot(int userId) {
-      List<String[]> transactions = DatabaseManager.getAllTransactionsSorted(userId);
+      List<Transaction> transactions = DatabaseManager.getAllTransactionsSorted(userId);
       if (transactions.isEmpty()) {
           System.out.println("No transactions to visualize.");
           Utils.pauseScreen();
@@ -288,11 +239,11 @@ public class Budget {
       List<LocalDate> plotDates = new java.util.ArrayList<>();
       List<Double> plotBalances = new java.util.ArrayList<>();
 
-      for (String[] t : transactions) {
+      for (Transaction t : transactions) {
           try {
-              LocalDate d = LocalDate.parse(t[0], DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-              double amt = Double.parseDouble(t[2]);
-              if (t[3].equalsIgnoreCase("Expense")) amt = -amt;
+              LocalDate d = LocalDate.parse(t.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+              double amt = t.getAmount();
+              if (t.getType().equalsIgnoreCase("Expense")) amt = -amt;
               cumulative += amt;
 
               if (!d.isBefore(startDate) && !d.isAfter(endDate)) {

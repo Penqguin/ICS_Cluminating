@@ -4,26 +4,33 @@ import src.ui.Utils.*;
 
 import src.DatabaseManager;
 import src.InflationFetcher;
+import src.model.Transaction;
 
 import java.util.Scanner;
 import java.util.List;
 
+/**
+ * Main dashboard homepage displayed after user login.
+ * Shows financial summary, recent transactions, and navigation menu.
+ */
 public class Home {
   private static final Scanner sc = new Scanner(System.in);
 
+  /**
+   * Displays the main financial dashboard homepage with navigation.
+   * @param userId The authenticated user's ID
+   */
   public static void displayHomepage(int userId) {
     boolean inHomepage = true;
 
     while (inHomepage) {
       Utils.clearScreen();
 
-      // Fetch dynamic data from database
       double totalIncome = DatabaseManager.getTotalIncome(userId);
       double totalExpenses = DatabaseManager.getTotalExpenses(userId);
       double totalBalance = totalIncome - totalExpenses;
-      List<String[]> recentTransactions = DatabaseManager.getRecentTransactions(userId);
+      List<Transaction> recentTransactions = DatabaseManager.getRecentTransactions(userId);
 
-      // 1. Header Banner
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
       System.out.println(Utils.HEADER_BANNER);
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
@@ -31,7 +38,6 @@ public class Home {
       System.out.println("                FINANCIAL DASHBOARD                      ");
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-      // 2. Financial Summary Block (Formatted Outputs)
       System.out.printf("    Net Balance: $%,12.2f\n", totalBalance);
       System.out.printf("   Total Income: $%,12.2f\n", totalIncome);
       System.out.printf(" Total Expenses: $%,12.2f\n", totalExpenses);
@@ -40,24 +46,21 @@ public class Home {
       System.out.printf("  CAN Inflation: %12.1f%%\n", inflationRate);
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-      // 3. Mini 2D Array Quick-View (Recent Activities)
       System.out.println("  RECENT TRANSACTIONS:");
       System.out.println("-".repeat(Utils.STANDARD_WIDTH));
       System.out.printf("  | %-10s | %-12s | %-10s | %-7s |\n", "Date", "Description", "Amount", "Type");
       System.out.println("-".repeat(Utils.STANDARD_WIDTH));
 
-      // Loop through the transactions to print rows
-      for (String[] transaction : recentTransactions) {
-        System.out.printf("  | %-10s | %-12s | $%9s | %-7s |\n",
-            transaction[0],
-            transaction[1],
-            transaction[2],
-            transaction[3]);
+      for (Transaction t : recentTransactions) {
+        System.out.printf("  | %-10s | %-12s | $%9.2f | %-7s |\n",
+            t.getDate(),
+            t.getDescription(),
+            t.getAmount(),
+            t.getType());
       }
       System.out.println("-".repeat(Utils.STANDARD_WIDTH));
       System.out.println("=".repeat(Utils.STANDARD_WIDTH));
 
-      // 4. Navigation Menu
       System.out.println("  1. [View Full Ledger]       2. [Add Income/Expense]");
       System.out.println("  3. [Analyze Graphs/Trends]  4. [Practice Problems]");
       System.out.println("  5. [Global Leaderboard]     6. [Run Budget Simulation]");

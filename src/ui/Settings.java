@@ -2,11 +2,17 @@ package src.ui;
 
 import src.User;
 import src.DatabaseManager;
-import java.util.Scanner;
 
+/**
+ * Handles account settings: username, password, and 2FA changes.
+ */
 public class Settings {
-    private static final Scanner sc = new Scanner(System.in);
+    private static final java.util.Scanner sc = Utils.sc;
 
+    /**
+     * Displays the settings menu and handles user selections.
+     * @param userId The user ID
+     */
     public static void displaySettingsMenu(int userId) {
         boolean inSettings = true;
         while (inSettings) {
@@ -40,6 +46,10 @@ public class Settings {
         }
     }
 
+    /**
+     * Changes the username for the given user.
+     * @param userId The user ID
+     */
     private static void changeUsername(int userId) {
         System.out.print("Enter new username: ");
         String newUsername = sc.nextLine().trim();
@@ -59,6 +69,10 @@ public class Settings {
         Utils.pauseScreen();
     }
 
+    /**
+     * Changes the password for the given user.
+     * @param userId The user ID
+     */
     private static void changePassword(int userId) {
         System.out.print("Enter new password (min 8 chars, mixed case, digit, special): ");
         String newPassword = sc.nextLine().trim();
@@ -78,6 +92,10 @@ public class Settings {
         Utils.pauseScreen();
     }
 
+    /**
+     * Toggles two-factor authentication on/off for the given user.
+     * @param userId The user ID
+     */
     private static void toggle2FA(int userId) {
         String query = "UPDATE users SET two_fa_enabled = NOT two_fa_enabled WHERE user_id = ?";
         try (java.sql.PreparedStatement pstmt = DatabaseManager.getConnection().prepareStatement(query)) {

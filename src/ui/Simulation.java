@@ -6,22 +6,45 @@ import java.util.Random;
 import java.io.*;
 import java.nio.file.*;
 
+/**
+ * Runs an interactive financial simulation showing inflation and salary change effects.
+ * Users adjust expenses to maintain their income/expense ratio.
+ */
 public class Simulation {
 
-    private static final String CONFIG_PATH = "/Users/michaelmaddison/.gemini/tmp/ics-culminating/config/skip_simulation_instructions.txt";
+    private static final String CONFIG_DIR = "config";
+    private static final String SKIP_FILE = "skip_simulation_instructions.txt";
 
+    /**
+     * Checks whether the instructions file exists (indicating user chose to skip).
+     * @return true if instructions should be shown
+     */
     private static boolean shouldShowInstructions() {
-        return !new File(CONFIG_PATH).exists();
+        return !new File(CONFIG_DIR, SKIP_FILE).exists();
     }
 
+    /**
+     * Creates or deletes the skip file based on user preference.
+     * @param skip true to skip instructions in the future
+     */
     private static void setSkipInstructions(boolean skip) {
-        if (skip) {
-            try { new File(CONFIG_PATH).createNewFile(); } catch (IOException e) { e.printStackTrace(); }
-        } else {
-            new File(CONFIG_PATH).delete();
+        try {
+            File dir = new File(CONFIG_DIR);
+            if (!dir.exists()) dir.mkdirs();
+            File skipFile = new File(CONFIG_DIR, SKIP_FILE);
+            if (skip) {
+                skipFile.createNewFile();
+            } else {
+                skipFile.delete();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Displays simulation instructions to the user.
+     */
     private static void showInstructions() {
         Utils.clearScreen();
         System.out.println("--- Welcome to the Financial Simulation ---");
@@ -41,12 +64,15 @@ public class Simulation {
         Utils.pauseScreen();
     }
 
+    /**
+     * Runs the interactive financial simulation for a user.
+     * @param userId The user ID
+     */
     public static void runSimulation(int userId) {
         if (shouldShowInstructions()) {
             showInstructions();
         }
 
-        // Data Gathering
         double currentIncome = DatabaseManager.getTotalIncome(userId);
         double currentExpense = DatabaseManager.getTotalExpenses(userId);
 
@@ -59,10 +85,9 @@ public class Simulation {
 
         double originalIERatio = currentIncome / currentExpense;
 
-        // Simulation Logic
         Random rand = new Random();
-        double inflation = 0.02 + (0.10 - 0.0) * rand.nextDouble(); // 2% to 10%
-        double salaryIncrease = 0.0 + (0.02 - 0.0) * rand.nextDouble(); // 0% to 2%
+        double inflation = 0.02 + (0.10 - 0.0) * rand.nextDouble();
+        double salaryIncrease = 0.0 + (0.02 - 0.0) * rand.nextDouble();
 
         double simulatedIncome = currentIncome * (1 + salaryIncrease);
         double simulatedExpense = currentExpense * (1 + inflation);
@@ -114,7 +139,6 @@ public class Simulation {
             }
         }
 
-        // Final Tips
         Utils.clearScreen();
         System.out.println("--- Simulation Complete ---");
         double finalPERatio = simulatedIncome / simulatedExpense;

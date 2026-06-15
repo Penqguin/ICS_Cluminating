@@ -5,7 +5,13 @@ import src.ui.Utils.*;
 import src.DatabaseManager;
 import java.util.List;
 
+/**
+ * Displays the global savings leaderboard showing top savers by savings rate.
+ */
 public class Leaderboard {
+    /**
+     * Displays the top 10 users ranked by savings rate.
+     */
     public static void display() {
         Utils.clearScreen();
         System.out.println("=".repeat(Utils.STANDARD_WIDTH));

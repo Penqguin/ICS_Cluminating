@@ -5,8 +5,16 @@ import src.User;
 import src.ui.Utils;
 import java.util.List;
 
+/**
+ * Handles user authentication: login, account creation, deletion, and 2FA.
+ */
 public class Login {
 
+    /**
+     * Main entry point for user authentication flow.
+     * Displays login menu and handles user selection.
+     * @return The authenticated user's ID, or -1 on failure
+     */
     public static int promptForUser() {
         while (true) {
             Utils.clearScreen();
@@ -58,6 +66,10 @@ public class Login {
         }
     }
 
+    /**
+     * Handles the login flow: username/password entry with 2FA verification.
+     * @return User ID if login successful, -1 otherwise
+     */
     private static int handleLogin() {
         System.out.print("Enter username: ");
         String username = Utils.sc.nextLine().trim();
@@ -78,7 +90,6 @@ public class Login {
                 if (user != null && user.isTwoFactorEnabled()) {
                     user.enableTwoFactor(user.getContactDestination()); // Regernerate code
                     logVerificationCode(user.getContactDestination(), user.getVerificationCode());
-                    // option to check messages to find the code
                     System.out.println("\n[2FA Required] A verification code has been sent to " + user.getContactDestination() + ". Check messages? (y/n)");
                     String choice = Utils.sc.nextLine().trim();
                     switch (choice) {
@@ -86,7 +97,6 @@ public class Login {
                         case "y":
                             viewMessages();
                     }
-                    // ask user for verification code
                     System.out.print("Enter 6-digit verification code: ");
                     String code = Utils.sc.nextLine().trim();
                     if (user.verifyCode(code)) {
@@ -121,6 +131,9 @@ public class Login {
         }
     }
 
+    /**
+     * Handles account deletion with confirmation.
+     */
     private static void handleDeleteAccount() {
         System.out.print("Enter username to delete: ");
         String username = Utils.sc.nextLine().trim();
@@ -149,6 +162,11 @@ public class Login {
         Utils.pauseScreen();
     }
 
+    /**
+     * Handles new user creation with password validation and optional 2FA setup.
+     * @param suggestedUsername Optional pre-filled username
+     * @return The new user's ID
+     */
     private static int createNewUser(String suggestedUsername) {
         String username = suggestedUsername;
         
@@ -223,7 +241,6 @@ public class Login {
                     user.saveToDatabase(userId);
                 } else {
                     System.out.println("Verification failed. 2FA will not be enabled.");
-                    // We don't save, so it stays disabled
                 }
             }
             System.out.println("User created successfully!");
@@ -240,6 +257,11 @@ public class Login {
         }
     }
 
+    /**
+     * Logs a verification code to a file for the simulated 2FA system.
+     * @param contact The email or phone
+     * @param code The 6-digit verification code
+     */
     private static void logVerificationCode(String contact, String code) {
         String safeContact = contact.replaceAll("[^a-zA-Z0-9@.]", "_");
         try {
@@ -253,6 +275,9 @@ public class Login {
         }
     }
 
+    /**
+     * Displays all messages sent to a given contact (for simulated 2FA).
+     */
     private static void viewMessages() {
         System.out.print("Enter contact (email/phone) to view messages: ");
         String contact = Utils.sc.nextLine().trim();
@@ -274,6 +299,10 @@ public class Login {
         Utils.pauseScreen();
     }
 
+    /**
+     * Placeholder for password reset functionality.
+     * @param contact The contact identifier
+     */
     private static void resetPassword(String contact) {
         
         Utils.pauseScreen();

@@ -1,2 +1,5 @@
 *.class
-.DS_STORE
+.DS_Store
+data.db
+config/
+messages/
