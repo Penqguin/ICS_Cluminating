@@ -5,12 +5,15 @@ import src.ui.Utils;
 import java.util.Random;
 import java.io.*;
 import java.nio.file.*;
+import java.util.Scanner;
 
 /**
  * Runs an interactive financial simulation showing inflation and salary change effects.
  * Users adjust expenses to maintain their income/expense ratio.
  */
 public class Simulation {
+
+    private static final Scanner sc = new Scanner(System.in);
 
     private static final String CONFIG_DIR = "config";
     private static final String SKIP_FILE = "skip_simulation_instructions.txt";
@@ -59,7 +62,7 @@ public class Simulation {
         System.out.println("3. Finish the simulation to see your final score and tips.");
         System.out.println("\n" + "-".repeat(Utils.STANDARD_WIDTH));
         System.out.print("Don't show instructions again? (y/n): ");
-        if (Utils.sc.nextLine().trim().equalsIgnoreCase("y")) {
+        if (sc.nextLine().trim().equalsIgnoreCase("y")) {
             setSkipInstructions(true);
         }
         Utils.pauseScreen();
@@ -119,19 +122,19 @@ public class Simulation {
             System.out.println("3. Modify Expense   4. Finish & See Tips");
             System.out.print("Select an option (1-4): ");
             
-            String choice = Utils.sc.nextLine().trim();
+            String choice = sc.nextLine().trim();
             switch (choice) {
                 case "1":
                     System.out.print("Enter amount to add: ");
-                    try { simulatedExpense += Double.parseDouble(Utils.sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
+                    try { simulatedExpense += Double.parseDouble(sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
                     break;
                 case "2":
                     System.out.print("Enter amount to remove: ");
-                    try { simulatedExpense -= Double.parseDouble(Utils.sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
+                    try { simulatedExpense -= Double.parseDouble(sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
                     break;
                 case "3":
                     System.out.print("Enter new total expense amount: ");
-                    try { simulatedExpense = Double.parseDouble(Utils.sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
+                    try { simulatedExpense = Double.parseDouble(sc.nextLine()); } catch (NumberFormatException e) { System.out.println("Invalid input."); Utils.pauseScreen(); }
                     break;
                 case "4":
                     running = false;

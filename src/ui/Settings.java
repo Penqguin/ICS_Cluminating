@@ -2,12 +2,13 @@ package src.ui;
 
 import src.User;
 import src.DatabaseManager;
+import java.util.Scanner;
 
 /**
  * Handles account settings: username, password, and 2FA changes.
  */
 public class Settings {
-    private static final java.util.Scanner sc = Utils.sc;
+    private static final Scanner sc = new Scanner(System.in);
 
     /**
      * Displays the settings menu and handles user selections.

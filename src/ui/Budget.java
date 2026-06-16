@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  * Manages budget-related operations: transaction ledger, graphs, and scatterplots.
  */
 public class Budget {
-  private static final Scanner sc = Utils.sc;
+    private static final Scanner sc = new Scanner(System.in);
 
   /**
    * Parses a date input in various formats (DD, DD/MM, DD/MM/YYYY) into DD/MM/YYYY.

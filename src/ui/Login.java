@@ -3,12 +3,14 @@ package src.ui;
 import src.DatabaseManager;
 import src.User;
 import src.ui.Utils;
+import java.util.Scanner;
 import java.util.List;
 
 /**
  * Handles user authentication: login, account creation, deletion, and 2FA.
  */
 public class Login {
+    private static final Scanner sc = new Scanner(System.in);
 
     /**
      * Main entry point for user authentication flow.
@@ -41,7 +43,7 @@ public class Login {
             System.out.println("[5] Exit");
             System.out.print("\nSelect an option: ");
 
-            String choice = Utils.sc.nextLine().trim();
+            String choice = sc.nextLine().trim();
 
             switch (choice) {
                 case "1":
@@ -74,7 +76,7 @@ public class Login {
      */
     private static int handleLogin() {
         System.out.print("Enter username: ");
-        String username = Utils.sc.nextLine().trim();
+        String username = sc.nextLine().trim();
 
         if (username.isEmpty()) {
             System.out.println("Username cannot be empty.");
@@ -84,7 +86,7 @@ public class Login {
 
         if (User.exists(username)) {
             System.out.print("Enter password: ");
-            String password = Utils.sc.nextLine().trim();
+            String password = sc.nextLine().trim();
 
             int userId = User.login(username, password);
             if (userId != -1) {
@@ -93,14 +95,14 @@ public class Login {
                     user.enableTwoFactor(user.getContactDestination()); // Regernerate code
                     logVerificationCode(user.getContactDestination(), user.getVerificationCode());
                     System.out.println("\n[2FA Required] A verification code has been sent to " + user.getContactDestination() + ". Check messages? (y/n)");
-                    String choice = Utils.sc.nextLine().trim();
+                    String choice = sc.nextLine().trim();
                     switch (choice) {
                         case "Y":
                         case "y":
                             viewMessages();
                     }
                     System.out.print("Enter 6-digit verification code: ");
-                    String code = Utils.sc.nextLine().trim();
+                    String code = sc.nextLine().trim();
                     if (user.verifyCode(code)) {
                         System.out.println("2FA Verified!");
                     } else {
@@ -119,7 +121,7 @@ public class Login {
             } else {
                 System.out.println("Incorrect password.");
                 System.out.print("Forgot password? (y/n): ");
-                String forgot = Utils.sc.nextLine().trim().toLowerCase();
+                String forgot = sc.nextLine().trim().toLowerCase();
                 if (forgot.equals("y") || forgot.equals("yes")) {
                     
                 }
@@ -138,7 +140,7 @@ public class Login {
      */
     private static void handleDeleteAccount() {
         System.out.print("Enter username to delete: ");
-        String username = Utils.sc.nextLine().trim();
+        String username = sc.nextLine().trim();
 
         if (username.isEmpty()) {
             System.out.println("Username cannot be empty.");
@@ -154,7 +156,7 @@ public class Login {
         }
 
         System.out.printf("Are you sure you want to delete user '%s'? (y/n): ", username);
-        String confirm = Utils.sc.nextLine().trim().toLowerCase();
+        String confirm = sc.nextLine().trim().toLowerCase();
         if (confirm.equals("y") || confirm.equals("yes")) {
             User.deleteAccount(userId);
             System.out.println("Account deleted successfully.");
@@ -176,10 +178,10 @@ public class Login {
             System.out.println("\n--- Create New User ---");
             if (username == null || username.isEmpty()) {
                 System.out.print("Enter username: ");
-                username = Utils.sc.nextLine().trim();
+                username = sc.nextLine().trim();
                 while (username.isEmpty()) {
                     System.out.print("Username cannot be empty. Enter username: ");
-                    username = Utils.sc.nextLine().trim();
+                    username = sc.nextLine().trim();
                 }
             } else {
                 System.out.printf("Username: %s%n", username);
@@ -197,7 +199,7 @@ public class Login {
         String password;
         while (true) {
             System.out.print("Enter password (min 8 chars, upper, lower, digit, special, no escapes): ");
-            password = Utils.sc.nextLine().trim();
+            password = sc.nextLine().trim();
             if (User.isValidPassword(password)) {
                 break;
             } else {
@@ -208,7 +210,7 @@ public class Login {
         String emailOrPhone;
         while (true) {
             System.out.print("Enter email or phone: ");
-            emailOrPhone = Utils.sc.nextLine().trim();
+            emailOrPhone = sc.nextLine().trim();
             if (User.isValidEmail(emailOrPhone) || User.isValidPhone(emailOrPhone)) {
                 break;
             } else {
@@ -217,7 +219,7 @@ public class Login {
         }
 
         System.out.print("Enable Two-Factor Authentication? (y/n): ");
-        boolean enable2FA = Utils.sc.nextLine().trim().toLowerCase().startsWith("y");
+        boolean enable2FA = sc.nextLine().trim().toLowerCase().startsWith("y");
 
         int userId = User.createAccount(username, password, emailOrPhone);
         if (userId != -1) {
@@ -228,7 +230,7 @@ public class Login {
                 
                 System.out.println("\n[2FA Setup] A verification code has been sent to " + emailOrPhone + ". Check messages? (y/n)");
                 
-                String choice = Utils.sc.nextLine().trim();
+                String choice = sc.nextLine().trim();
                 switch (choice) {
                     case "Y":
                     case "y":
@@ -236,7 +238,7 @@ public class Login {
                 }
 
                 System.out.print("Enter verification code to confirm: ");
-                String code = Utils.sc.nextLine().trim();
+                String code = sc.nextLine().trim();
                 
                 if (user.verifyCode(code)) {
                     System.out.println("2FA Enabled successfully!");
@@ -282,7 +284,7 @@ public class Login {
      */
     private static void viewMessages() {
         System.out.print("Enter contact (email/phone) to view messages: ");
-        String contact = Utils.sc.nextLine().trim();
+        String contact = sc.nextLine().trim();
         String safeContact = contact.replaceAll("[^a-zA-Z0-9@.]", "_");
         java.io.File file = new java.io.File("messages/" + safeContact + ".txt");
         if (file.exists()) {

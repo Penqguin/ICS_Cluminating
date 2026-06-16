@@ -9,7 +9,7 @@ import src.InflationFetcher;
  * Uses 2D arrays to store problem prompts and solutions.
  */
 public class Practice {
-    private static final Scanner sc = Utils.sc;
+    private static final Scanner sc = new Scanner(System.in);
 
     /** 2D array of savings-related practice problems [question, answer] */
     private static final String[][] savingsProblem = {
